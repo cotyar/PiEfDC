@@ -15,9 +15,19 @@ object FruitCheckout {
   case class Orange(override val price: BigDecimal) extends Fruit(price)
   object Orange extends Orange(BigDecimal(0.25))
 
-  def checkout (items: List[Fruit]) = {
+  private def plainCheckout (items: List[Fruit]) = {
     items.map(_.price).sum
   }
+
+  private def discountedCheckout (items: List[Fruit]) = {
+    val appleCount = items.count(_ == Apple)
+    val appleSum = (appleCount - appleCount / 2) * Apple.price
+    val orangeCount = items.count(_ == Orange)
+    val orangeSum = (orangeCount - orangeCount / 3) * Orange.price
+    appleSum + orangeSum
+  }
+
+  def checkout: List[Fruit] => BigDecimal = discountedCheckout
 
   def checkoutByNames (itemNames: List[String]) = {
     val items = itemNames
